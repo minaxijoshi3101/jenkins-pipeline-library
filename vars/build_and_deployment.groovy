@@ -20,4 +20,20 @@ def call(Map pipelineparam)
         
         '''
       }
-      
+      stage("upload artifacts to nexus repo")
+      {
+        nexusArtifactUploader artifacts: [
+          [artifactId: 'java-mysql-example', 
+           classifier: '', 
+           file: 'target/usermanagement_javasqlproject-1.0-SNAPSHOT.jar', 
+           type: 'jar'
+          ]
+        ], 
+          credentialsId: 'nexus3', 
+          groupId: 'org.funtimecoding', 
+          nexusUrl: 'http://52.140.68.208:8081/', 
+          nexusVersion: 'nexus3', 
+          protocol: 'http', 
+          repository: 'http://52.140.68.208:8081/repository/app-releases/', 
+          version: '1.0-SNAPSHOT'
+      }
