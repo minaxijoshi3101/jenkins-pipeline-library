@@ -23,7 +23,7 @@ def call(Map pipelineparam)
       stage("upload artifacts to nexus repo")
       {
         sh '''
-        curl -v -u admin:admin --upload-file target/usermanagement_javasqlproject-1.0-SNAPSHOT.jar http://52.140.68.208:8081/repository/app-releases/org/funtimecoding/1.0/usermanagement_javasqlproject-1.0-SNAPSHOT.jar
+         curl -v -u admin:admin --upload-file target/java-mysql-example-1.0-SNAPSHOT.jar http://52.140.68.208:8081/repository/app-releases/org/funtimecoding/1.0/java-mysql-example-1.0-SNAPSHOT.jar
         '''
         /*nexusArtifactUploader artifacts: [
           [artifactId: 'java-mysql-example', 
