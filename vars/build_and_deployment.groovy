@@ -17,27 +17,14 @@ def call(Map pipelineparam)
       stage("build code")
       {
         sh '''
+        mvn clean install
         
         '''
       }
-      stage("upload artifacts to nexus repo")
+      stage("push image to docker registry")
       {
-        sh '''
-         curl -v -u admin:admin --upload-file target/java-mysql-example-1.0-SNAPSHOT.jar http://52.140.68.208:8081/repository/app-releases/org/funtimecoding/1.0/java-mysql-example-1.0-SNAPSHOT.jar
-        '''
-        /*nexusArtifactUploader artifacts: [
-          [artifactId: 'java-mysql-example', 
-           classifier: '', 
-           file: 'target/usermanagement_javasqlproject-1.0-SNAPSHOT.jar', 
-           type: 'jar'
-          ]
-        ], 
-          credentialsId: 'nexus3', 
-          groupId: 'org.funtimecoding', 
-          nexusUrl: 'http://52.140.68.208:8081/', 
-          nexusVersion: 'nexus3', 
-          protocol: 'http', 
-          repository: 'http://52.140.68.208:8081/repository/app-releases/', 
-          version: '1.0-SNAPSHOT'
-          */
+        
       }
+    }
+  }
+}
