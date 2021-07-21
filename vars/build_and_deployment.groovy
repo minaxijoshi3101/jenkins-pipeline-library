@@ -2,6 +2,8 @@ def call(Map pipelineparam)
 {
   env.REPO_NAME=pipelineparam.REPO_NAME
   env.BRANCH=pipelineparam.BRANCH
+  env.GIT_URL=pipelineparam.GIT_URL
+  env.GIT_GROUP=pipelineparam.GIT_GROUP
   pipeline
   {
     node
@@ -9,7 +11,7 @@ def call(Map pipelineparam)
       stage("check-scm")
       {
       sh '''
-      git clone $REPO_NAME
+      git clone $GIT_URL+"/"+$GIT_GROUP+"/"+$REPO_NAME
       cd $REPO_NAME
       git checkout $BRANCH
       '''
