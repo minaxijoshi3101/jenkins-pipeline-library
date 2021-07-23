@@ -11,6 +11,7 @@ def call(Map pipelineparam)
       stage("check-scm")
       {
       sh '''
+      rm -rf $WORKSPACE
       git clone $GIT_URL"/"$GIT_GROUP"/"$REPO_NAME
       cd $REPO_NAME
       git checkout $BRANCH
