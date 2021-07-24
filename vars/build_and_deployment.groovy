@@ -16,6 +16,7 @@ def call(Map pipelineparam)
       git clone $GIT_URL"/"$GIT_GROUP"/"$REPO_NAME
       cd $REPO_NAME
       git checkout $BRANCH
+      echo ls
       '''
       }
       stage("build code")
