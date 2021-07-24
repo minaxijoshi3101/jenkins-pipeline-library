@@ -24,7 +24,7 @@ def call(Map pipelineparam)
         sh '''
         echo $PWD
         cd $REPO_NAME
-        /Applications/apache-maven-3.8.1/bin mvn clean install
+        /Applications/apache-maven-3.8.1/bin/mvn clean install
         '''
       }
       stage("push image to docker registry")
