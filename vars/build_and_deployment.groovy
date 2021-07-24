@@ -22,6 +22,8 @@ def call(Map pipelineparam)
       stage("build code")
       {
         sh '''
+        echo $PWD
+        cd $REPO_NAME
         mvn clean install
         
         '''
