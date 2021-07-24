@@ -24,6 +24,7 @@ def call(Map pipelineparam)
         sh '''
         echo $PWD
         cd $REPO_NAME
+        println "mvn -version".execute().text
         mvn clean install
         
         '''
