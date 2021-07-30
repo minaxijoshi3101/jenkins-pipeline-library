@@ -13,7 +13,6 @@ def call(Map pipelineparam)
       sh '''
       echo $WORKSPACE
       rm -rf $WORKSPACE/*
-      ehco "******************.  " $REPO_NAME
       git clone $GIT_URL"/"$GIT_GROUP"/"$REPO_NAME
       cd $REPO_NAME
       git checkout $BRANCH
