@@ -4,6 +4,10 @@ def call(Map pipelineparam)
   env.BRANCH=pipelineparam.BRANCH
   pipeline
   {
+    tools
+    {
+      jdk="java8" 
+    }
     node
     {
       stage("check-scm")
