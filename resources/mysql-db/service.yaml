@@ -1,0 +1,79 @@
+--- 
+    apiVersion: apps/v1 
+    kind: Deployment 
+    metadata: 
+      labels: 
+        environment: %ENVIRONMENT%-%APP_NAME%
+      name: %ENVIRONMENT%-%APP_NAME%
+      namespace: %NAMESPACE%
+    spec: 
+      minReadySeconds: 10
+      replicas: %REPLICAS%
+      selector: 
+        matchLabels: 
+          environment: %ENVIRONMENT%-%APP_NAME%
+      strategy: 
+        rollingUpdate: 
+          maxSurge: 1
+          maxUnavailable: 0
+        type: RollingUpdate
+      template: 
+        metadata: 
+          labels: 
+            environment: %ENVIRONMENT%-%APP_NAME%
+        spec: 
+          nodeName: %HOST_NAME%
+          containers: 
+            - 
+              image: "mysql:8.0.23"
+              name: mysql
+              env:
+              - name: MYSQL_ROOT_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: %ENVIRONMENT%-%APP_NAME%-root-credentials  
+                    key: password   
+              - name: MYSQL_SVC_USER    
+                valueFrom:    
+                  secretKeyRef:   
+                    name: %ENVIRONMENT%-%APP_NAME%-credentials   
+                    key: username    
+              - name: MYSQL_SVC_PASSWORD    
+                valueFrom:    
+                  secretKeyRef:   
+                    name: %ENVIRONMENT%-%APP_NAME%-credentials
+                    key: password
+              - name: MYSQL_DATABASE
+                valueFrom:
+                  configMapKeyRef:   
+                    name: %ENVIRONMENT%-%APP_NAME%-conf 
+                    key: name
+              ports:
+              - containerPort: %CONTAINER_PORT%
+                hostPort: %CONTAINER_PORT%
+              volumeMounts:
+              - name: mysql-persistent-storage
+                mountPath: /var/lib/mysql
+          volumes:
+          - name: mysql-persistent-storage
+            hostPath:
+              # Ensure the file directory is created.
+              path: /opt/mysql
+              type: DirectoryOrCreate
+---
+    apiVersion: v1 
+    kind: Service   
+    metadata: 
+         name: %ENVIRONMENT%-lb-%APP_NAME%-service
+         namespace: %NAMESPACE% 
+         labels: 
+            app: %ENVIRONMENT%-lb-%APP_NAME%-service  
+    spec: 
+        type: LoadBalancer
+        ports:     
+        - port: %HOST_PORT% 
+          targetPort: %CONTAINER_PORT%
+        externalIPs:
+        - %HOST_IP%
+        selector:    
+            environment: %ENVIRONMENT%-%APP_NAME% 

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: %ENVIRONMENT%-%APP_NAME%-conf
+  namespace: %NAMESPACE%
+data:
+ host: %HOST_IP%
+ name: %DB_NAME%

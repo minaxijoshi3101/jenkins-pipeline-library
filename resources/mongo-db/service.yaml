@@ -1,0 +1,77 @@
+--- 
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: 
+  labels: 
+    environment: %ENVIRONMENT%-%APP_NAME%
+  name: %ENVIRONMENT%-%APP_NAME%
+  namespace: %NAMESPACE%
+spec: 
+  serviceName: %ENVIRONMENT%-%APP_NAME%
+  replicas: 1
+  selector: 
+    matchLabels: 
+      environment: %ENVIRONMENT%-%APP_NAME%
+  template: 
+    metadata: 
+      labels: 
+        environment: %ENVIRONMENT%-%APP_NAME%
+    spec: 
+      nodeName: %HOST_NAME%
+      containers: 
+        - 
+          image: "mongo:4.2.12"
+          name: %APP_NAME%-mongo-db
+          env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: admin
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: %ENVIRONMENT%-%APP_NAME%-root-credentials
+                key: password
+          - name: MONGO_SVC_USER
+            valueFrom:
+              secretKeyRef:
+                name: %ENVIRONMENT%-%APP_NAME%-credentials
+                key: username
+          - name: MONGO_SVC_USER_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: %ENVIRONMENT%-%APP_NAME%-credentials
+                key: password
+          - name: MONGO_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: %ENVIRONMENT%-%APP_NAME%-conf
+                key: name
+          ports:
+          - containerPort: %CONTAINER_PORT%
+          volumeMounts:
+          - name: mongo-persistent-storage
+            mountPath: /data
+      volumes:
+      - name: mongo-persistent-storage
+        hostPath:
+          # Ensure the file directory is created.
+          path: /opt/mongodb/data
+          type: DirectoryOrCreate
+---
+apiVersion: v1 
+kind: Service    
+metadata:   
+    name: %ENVIRONMENT%-lb-%APP_NAME%-service  
+    namespace: %NAMESPACE%  
+    labels:   
+       app: %ENVIRONMENT%-lb-%APP_NAME%-service   
+spec:    
+    type: LoadBalancer    
+    ports:    
+    - port: %HOST_PORT% 
+      targetPort: %CONTAINER_PORT%
+      nodePort: 0
+      protocol: "TCP"
+    externalIPs:
+    - %HOST_IP%
+    selector: 
+        environment: %ENVIRONMENT%-%APP_NAME% 
